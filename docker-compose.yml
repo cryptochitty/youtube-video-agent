@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - GROQ_MODEL=${GROQ_MODEL:-llama-3.1-70b-versatile}
+      - IMAGE_SOURCE=${IMAGE_SOURCE:-duckduckgo}
+      - PEXELS_API_KEY=${PEXELS_API_KEY:-}
+      - TTS_VOICE=${TTS_VOICE:-en-US-AriaNeural}
+      - CORS_ORIGINS=http://localhost:3000
+    volumes:
+      - ./outputs:/app/outputs
+      - ./temp:/app/temp
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
