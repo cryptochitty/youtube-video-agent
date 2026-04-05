@@ -37,6 +37,9 @@ class VideoRequest(BaseModel):
     language: str = Field(default="en", description="Language code e.g. en, es, fr, de")
     voice: Optional[str] = Field(default=None, description="Override TTS voice")
     extra_instructions: Optional[str] = Field(default=None, max_length=500)
+    context_file_id: Optional[str] = Field(default=None, description="Uploaded PPTX or video file ID")
+    voice_sample_id: Optional[str] = Field(default=None, description="Uploaded voice sample file ID")
+    presenter_photo_id: Optional[str] = Field(default=None, description="Uploaded presenter photo file ID")
 
 
 class ScriptSection(BaseModel):
@@ -79,5 +82,7 @@ class Job(BaseModel):
     ])
     script: Optional[VideoScript] = None
     video_path: Optional[str] = None
+    audio_path: Optional[str] = None
+    video_only_path: Optional[str] = None
     error: Optional[str] = None
     overall_progress: int = 0

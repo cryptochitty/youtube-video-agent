@@ -10,9 +10,10 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 
 
-def _build_prompt(request: VideoRequest) -> str:
+def _build_prompt(request: VideoRequest, context: str = "") -> str:
     duration = int(request.duration.value)
     num_sections = max(3, duration // 45)
+    context_line = ("- Reference content from uploaded file:\n" + context) if context else ""
 
     return f"""You are a professional YouTube content creator and scriptwriter.
 
@@ -22,6 +23,7 @@ Create a complete YouTube video script for the following:
 - Target duration: ~{duration} seconds
 - Language: {request.language}
 {f'- Extra instructions: {request.extra_instructions}' if request.extra_instructions else ''}
+{context_line}
 
 Return ONLY valid JSON with this exact structure (no markdown, no explanation):
 {{
@@ -112,8 +114,8 @@ def _parse_script(raw: str, request: VideoRequest) -> VideoScript:
     )
 
 
-async def generate_script(request: VideoRequest) -> VideoScript:
-    prompt = _build_prompt(request)
+async def generate_script(request: VideoRequest, context: str = "") -> VideoScript:
+    prompt = _build_prompt(request, context)
 
     if LLM_PROVIDER == "groq":
         if not GROQ_API_KEY:

@@ -7,10 +7,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.routes.video import router
+from app.routes.upload import router as upload_router
 
 OUTPUT_DIR = os.getenv("OUTPUT_DIR", "./outputs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(os.getenv("TEMP_DIR", "./temp"), exist_ok=True)
+os.makedirs(os.getenv("UPLOAD_DIR", "./uploads"), exist_ok=True)
 
 app = FastAPI(
     title="YouTube Video Generator",
@@ -28,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(upload_router)
 
 # Serve generated videos statically for preview
 app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")

@@ -7,6 +7,9 @@ export interface VideoRequest {
   language: string
   voice?: string
   extra_instructions?: string
+  context_file_id?: string
+  voice_sample_id?: string
+  presenter_photo_id?: string
 }
 
 export interface JobStep {
@@ -47,6 +50,8 @@ export interface Job {
   script?: VideoScript
   error?: string
   has_video?: boolean
+  has_audio?: boolean
+  has_video_only?: boolean
 }
 
 export async function createJob(request: VideoRequest): Promise<{ job_id: string }> {
@@ -78,8 +83,31 @@ export async function deleteJob(jobId: string): Promise<void> {
   await fetch(`${API_URL}/api/jobs/${jobId}`, { method: 'DELETE' })
 }
 
+async function uploadFile(endpoint: string, file: File): Promise<{ file_id: string; filename: string }> {
+  const form = new FormData()
+  form.append('file', file)
+  const res = await fetch(`${API_URL}/api/upload/${endpoint}`, { method: 'POST', body: form })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.detail || 'Upload failed')
+  }
+  return res.json()
+}
+
+export const uploadContextFile = (file: File) => uploadFile('context', file)
+export const uploadVoiceSample = (file: File) => uploadFile('voice', file)
+export const uploadPresenterPhoto = (file: File) => uploadFile('photo', file)
+
 export function getDownloadUrl(jobId: string): string {
   return `${API_URL}/api/jobs/${jobId}/download`
+}
+
+export function getAudioDownloadUrl(jobId: string): string {
+  return `${API_URL}/api/jobs/${jobId}/download/audio`
+}
+
+export function getVideoOnlyDownloadUrl(jobId: string): string {
+  return `${API_URL}/api/jobs/${jobId}/download/video-only`
 }
 
 export function getStreamUrl(jobId: string): string {

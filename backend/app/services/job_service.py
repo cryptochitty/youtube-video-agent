@@ -59,3 +59,17 @@ def set_job_video(job_id: str, path: str):
     if job:
         job.video_path = path
         job.updated_at = time.time()
+
+
+def set_job_audio(job_id: str, path: str):
+    job = _jobs.get(job_id)
+    if job:
+        job.audio_path = path
+        job.updated_at = time.time()
+
+
+def set_job_video_only(job_id: str, path: str):
+    job = _jobs.get(job_id)
+    if job:
+        job.video_only_path = path
+        job.updated_at = time.time()

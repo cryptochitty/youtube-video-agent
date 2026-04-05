@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Download, Copy, CheckCheck, Tag, FileText, Play, ChevronDown, ChevronUp } from 'lucide-react'
-import { Job, getDownloadUrl, getStreamUrl } from '@/lib/api'
+import { Download, Copy, CheckCheck, Tag, FileText, Play, ChevronDown, ChevronUp, Music, Film } from 'lucide-react'
+import { Job, getDownloadUrl, getAudioDownloadUrl, getVideoOnlyDownloadUrl, getStreamUrl } from '@/lib/api'
 
 interface Props {
   job: Job
@@ -57,15 +57,30 @@ export default function VideoResult({ job, onNewVideo }: Props) {
         </div>
       )}
 
-      {/* Download */}
-      <a
-        href={getDownloadUrl(job.id)}
-        download
-        className="flex items-center justify-center gap-2 w-full bg-yt-red hover:bg-red-600 text-white font-semibold py-3.5 rounded-lg transition-colors"
-      >
-        <Download className="w-5 h-5" />
-        Download MP4
-      </a>
+      {/* Downloads */}
+      <div className="grid gap-2">
+        <a href={getDownloadUrl(job.id)} download
+          className="flex items-center justify-center gap-2 w-full bg-yt-red hover:bg-red-600 text-white font-semibold py-3 rounded-lg transition-colors"
+        >
+          <Download className="w-4 h-4" /> Download Full Video (MP4)
+        </a>
+        <div className="grid grid-cols-2 gap-2">
+          {job.has_audio && (
+            <a href={getAudioDownloadUrl(job.id)} download
+              className="flex items-center justify-center gap-2 bg-yt-surface border border-yt-border hover:border-blue-500 text-gray-300 hover:text-white text-sm font-medium py-2.5 rounded-lg transition-colors"
+            >
+              <Music className="w-4 h-4 text-blue-400" /> Audio Only (MP3)
+            </a>
+          )}
+          {job.has_video_only && (
+            <a href={getVideoOnlyDownloadUrl(job.id)} download
+              className="flex items-center justify-center gap-2 bg-yt-surface border border-yt-border hover:border-purple-500 text-gray-300 hover:text-white text-sm font-medium py-2.5 rounded-lg transition-colors"
+            >
+              <Film className="w-4 h-4 text-purple-400" /> Video Only (No Audio)
+            </a>
+          )}
+        </div>
+      </div>
 
       {script && (
         <div className="space-y-4">
