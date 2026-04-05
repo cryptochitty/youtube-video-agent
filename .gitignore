@@ -18,6 +18,9 @@ build/
 # Generated outputs (don't commit videos)
 backend/outputs/
 backend/temp/
+outputs/
+temp/
+uploads/
 
 # Node
 node_modules/
